@@ -17,7 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.jcodecraeer.linkedviewpager.LinkedViewPager.MultiViewPager
+        <com.jcodecraeer.linkedviewpager.LinkedViewPager.MultiViewPagerOk
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="80dp"
