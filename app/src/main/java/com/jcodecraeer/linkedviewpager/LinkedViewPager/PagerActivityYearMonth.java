@@ -2,14 +2,11 @@ package com.jcodecraeer.linkedviewpager.LinkedViewPager;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.*;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,12 +14,10 @@ import java.util.Calendar;
 
 import io.lahphim.mamoon.R;
 
-/**
- * 成功的实现了TextView显示不同的日期
- */
-public class PagerActivity extends FragmentActivity {
+public class PagerActivityYearMonth extends FragmentActivity {
     private RelativeLayout[] relativeLayouts;
-    private int mCurrentYearMonthPosition = Integer.MAX_VALUE / 2;
+    private int currentDatePosition = Integer.MAX_VALUE / 2;
+    private int currentYearMonthValue = getCurrentYearMonthValue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +28,14 @@ public class PagerActivity extends FragmentActivity {
 
         final MyAdapter adapter = new MyAdapter();
         pager.setAdapter(adapter);
-        pager.setCurrentItem(mCurrentYearMonthPosition);
+        pager.setCurrentItem(currentDatePosition);
 
         relativeLayouts = new RelativeLayout[9];
         for(int i=0; i< relativeLayouts.length; i++){
             relativeLayouts[i] = (RelativeLayout)LayoutInflater.from(this).inflate(R.layout.date_page, null);
         }
+
+//        setYearMonth(currentDatePosition);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -48,6 +45,13 @@ public class PagerActivity extends FragmentActivity {
 
             @Override
             public void onPageSelected(int position) {
+//                position %= relativeLayouts.length;
+//                if (position < 0) {
+//                    position = relativeLayouts.length + position;
+//                }
+//                RelativeLayout view = relativeLayouts[position];
+//                TextView textView = (TextView)view.findViewById(R.id.date_text);
+//                textView.setText(getYearMonth());
             }
 
             @Override
@@ -55,6 +59,18 @@ public class PagerActivity extends FragmentActivity {
 
             }
         });
+    }
+
+    private void setYearMonth(int position) {
+        position %= relativeLayouts.length;
+        if (position < 0) {
+            position = relativeLayouts.length + position;
+        }
+        RelativeLayout view = relativeLayouts[position];
+        TextView textView = (TextView)view.findViewById(R.id.date_text);
+
+
+//        textView.setText(getYearMonth());
     }
 
     public class MyAdapter extends android.support.v4.view.PagerAdapter {
@@ -78,15 +94,19 @@ public class PagerActivity extends FragmentActivity {
         @Override
         public Object instantiateItem(ViewGroup container, final int position) {
             // 对ViewPager页号求模取出View列表中要显示的项
-            String yearMonth = getYearMonth(position);
-
-            int newPos = position % relativeLayouts.length;
-            if (newPos < 0) {
-                newPos = relativeLayouts.length + newPos;
+            int newPosition = position % relativeLayouts.length;
+            if (newPosition < 0) {
+                newPosition = relativeLayouts.length + newPosition;
             }
-            RelativeLayout view = relativeLayouts[newPos];
+            RelativeLayout view = relativeLayouts[newPosition];
             TextView textView = (TextView)view.findViewById(R.id.date_text);
-            textView.setText(yearMonth);
+
+            int value = position - currentDatePosition;
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, value);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH) + 1;
+            textView.setText(String.valueOf(year) + "年" + String.valueOf(month) + "月");
 
             // 如果View已经在之前添加到了一个父组件，则必须先remove，否则会抛出IllegalStateException。
             ViewParent viewGroup = view.getParent();
@@ -101,17 +121,26 @@ public class PagerActivity extends FragmentActivity {
     }
 
     /**
-     * 获取对应的年月值
-     * @param position
+     * 获取当前的年月
      * @return
      */
-    private String getYearMonth(int position) {
-        int value = position - mCurrentYearMonthPosition;
+    private String getCurrentYearMonth() {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, value);
         int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH) + 1;
+        int month = cal.get(Calendar.MONTH )+1;
 
         return String.valueOf(year) + "年" + String.valueOf(month) + "月";
+    }
+
+    /**
+     * 获取当前的年月所对应的数值
+     * @return
+     */
+    private int getCurrentYearMonthValue() {
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH )+1;
+
+        return Integer.parseInt(String.valueOf(year) + String.valueOf(month));
     }
 }
