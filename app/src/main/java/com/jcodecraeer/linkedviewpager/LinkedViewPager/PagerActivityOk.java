@@ -67,7 +67,7 @@ public class PagerActivityOk extends FragmentActivity {
             relativeLayouts[i] = (RelativeLayout)LayoutInflater.from(this).inflate(R.layout.date_page, null);
         }
 
-        main_scrolllayout.setFollowViewPager(pager);
+        pager.setFollowViewPager(main_scrolllayout);
     }
 
     public void initFramePagerView(View frameView ,int drawable){

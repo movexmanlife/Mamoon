@@ -3,26 +3,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#467212"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
-
-    <com.jcodecraeer.linkedviewpager.LinkedViewPager.ViewPager
-        android:id="@+id/main_scrolllayout"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_centerInParent="true"
-        android:focusable="false" />
 
     <com.jcodecraeer.linkedviewpager.LinkedViewPager.NotouchLayout
         android:layout_width="match_parent"
+        android:background="@android:color/transparent"
         android:layout_height="wrap_content">
 
-        <com.jcodecraeer.linkedviewpager.LinkedViewPager.MultiViewPagerOk
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:background="@color/material_deep_teal_200"
-            app:matchChildWidth="@+id/vg_cover" />
+        <com.jcodecraeer.linkedviewpager.LinkedViewPager.ViewPager
+            android:id="@+id/main_scrolllayout"
+            android:layout_width="fill_parent"
+            android:background="@android:color/transparent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:focusable="false" />
     </com.jcodecraeer.linkedviewpager.LinkedViewPager.NotouchLayout>
+
+    <com.jcodecraeer.linkedviewpager.LinkedViewPager.MultiViewPagerOk
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_height="match_parent"
+        app:matchChildWidth="@+id/vg_cover" />
 
 </FrameLayout>
