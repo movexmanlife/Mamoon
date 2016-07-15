@@ -34,12 +34,11 @@ public class ArcRateChartView extends View {
     private static final int CIRCLE_ANGLE = 360;
 
     private Context mContext;
-    private Paint mRatePaint; // 画圆弧的画笔
+    private Paint mArcRatePaint; // 画圆弧的画笔
     private Paint mBgCirclePaint; // 画"圆弧"中的那个圆形
+    private RectF mArcRateRect; // 圆弧的边界
 
     private double mOriginTotalRateSum;
-    private RectF mOval;
-
     private int mGapAngle = 1; // 空隙角度大小
     private int mRotateAngle = DEFAULT_ROTATE_ANGLE; // 旋转角度
     private int mDrawArcTime = 0; // 绘制"大小圆弧"的时间
@@ -68,7 +67,7 @@ public class ArcRateChartView extends View {
     /**
      * 当前是否在执行动画
      */
-    private boolean isAnimating = false;
+    private boolean mIsAnimating = false;
     private List<ArcInfo> mArcInfoList = new ArrayList<>();
     private List<Float> mRateAngleList = new ArrayList<>();
 
@@ -108,8 +107,8 @@ public class ArcRateChartView extends View {
     }
 
     private void initPaint() {
-        mRatePaint = new Paint();
-        setPaintAttrs(mRatePaint, Style.FILL);
+        mArcRatePaint = new Paint();
+        setPaintAttrs(mArcRatePaint, Style.FILL);
 
         // 背景圆
         mBgCirclePaint = new Paint();
@@ -146,8 +145,8 @@ public class ArcRateChartView extends View {
         // 背景圆的半径
         int bgCircleRadius = (int) (radius - mArcWidth);
 
-        if (mOval == null) {
-            mOval = new RectF(left, top, right, bottom);
+        if (mArcRateRect == null) {
+            mArcRateRect = new RectF(left, top, right, bottom);
         }
 
         if (mRateAngleList.size() <= 0) {
@@ -156,9 +155,9 @@ public class ArcRateChartView extends View {
 
         float angleAsc = 0;
         for (int i = 0; i < mRateAngleList.size(); i++) {
-            mRatePaint.setColor(getResources().getColor(mArcInfoList.get(i).mColorId));
+            mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(i).mColorId));
 
-            canvas.drawArc(mOval, angleAsc + i * 1, mRateAngleList.get(i), true, mRatePaint);
+            canvas.drawArc(mArcRateRect, angleAsc + i * 1, mRateAngleList.get(i), true, mArcRatePaint);
             angleAsc += mRateAngleList.get(i);
         }
 
@@ -249,7 +248,7 @@ public class ArcRateChartView extends View {
             return;
         }
 
-        if (isAnimating) {
+        if (mIsAnimating) {
             return;
         }
 
@@ -273,7 +272,7 @@ public class ArcRateChartView extends View {
         objectAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                isAnimating = true;
+                mIsAnimating = true;
             }
 
             @Override
@@ -371,7 +370,7 @@ public class ArcRateChartView extends View {
         anim.setAnimationListener(new SimpleAnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                isAnimating = false;
+                mIsAnimating = false;
             }
         });
         startAnimation(anim);
