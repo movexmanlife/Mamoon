@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+
+    <color name="total_color">#76adf3</color>
+    <color name="wait_color">#f07e68</color>
+    <color name="balance_color">#3cbdd0</color>
+    <color name="withdraw_color">#eb86be</color>
+
+
 </resources>

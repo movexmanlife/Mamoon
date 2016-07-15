@@ -9,5 +9,14 @@
         <!-- Maximum size. -->
         <attr name="android:maxHeight" />
     </declare-styleable>
-
+    <declare-styleable name="ArcRateChart">
+        <attr name="smallRateColor" format="color" />
+        <attr name="smallRateArcWidth" format="dimension"></attr>
+        <attr name="bigRateColor" format="color" />
+        <attr name="bigRateArcWidth" format="dimension"></attr>
+        <attr name="noRateColor" format="color" />
+        <attr name="bgCircleColor" format="color" />
+        <attr name="drawArcTime" format="integer"></attr>
+        <attr name="rotateTime" format="integer"></attr>
+    </declare-styleable>
 </resources>
