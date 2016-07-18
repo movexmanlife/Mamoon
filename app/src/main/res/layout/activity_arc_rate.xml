@@ -20,6 +20,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:background="#ffe6e6e6"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:orientation="horizontal">

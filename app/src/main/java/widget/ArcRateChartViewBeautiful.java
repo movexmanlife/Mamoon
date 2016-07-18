@@ -23,9 +23,9 @@ import java.util.List;
 import io.lahphim.mamoon.R;
 
 /**
- * 圆弧比率图，用于展示钱宝宝和定期理财项目
+ * 圆弧比率图，最近本的功能已经实现了。
  */
-public class ArcRateChartView extends View {
+public class ArcRateChartViewBeautiful extends View {
     private static final int DEFAULT_BG_CIRCLE_COLOR = 0xffe6e6e6;
     private static final int DEFAULT_RATE_ARC_WIDTH = 25;
     private static final int DEFAULT_DRAW_ARC_TIME = 800;
@@ -73,15 +73,15 @@ public class ArcRateChartView extends View {
     private List<ArcInfo> mArcInfoList = new ArrayList<>();
     private List<Float> mRateAngleList = new ArrayList<>();
 
-    public ArcRateChartView(Context context) {
+    public ArcRateChartViewBeautiful(Context context) {
         this(context, null);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs) {
+    public ArcRateChartViewBeautiful(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs, int defStyle) {
+    public ArcRateChartViewBeautiful(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
 
