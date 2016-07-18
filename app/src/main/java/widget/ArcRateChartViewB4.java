@@ -13,9 +13,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -24,15 +21,15 @@ import java.util.List;
 import io.lahphim.mamoon.R;
 
 /**
- * 圆弧比率图，用于展示钱宝宝和定期理财项目
+ * 完全显示成功了，需要重构一下。
  */
-public class ArcRateChartView extends View {
+public class ArcRateChartViewB4 extends View {
     private static final int DEFAULT_BG_CIRCLE_COLOR = 0xffe6e6e6;
     private static final int DEFAULT_RATE_ARC_WIDTH = 25;
-    private static final int DEFAULT_DRAW_ARC_TIME = 800;
+    private static final int DEFAULT_DRAW_ARC_TIME = 5 * 1000;
     private static final int DEFAULT_ROTATE_TIME = 600;
     private static final int CIRCLE_ANGLE = 360;
-    private static final String TAG = ArcRateChartView.class.getSimpleName();
+    private static final String TAG = ArcRateChartViewB4.class.getSimpleName();
 
     private Context mContext;
     private Paint mArcRatePaint; // 画圆弧的画笔
@@ -70,17 +67,18 @@ public class ArcRateChartView extends View {
     private boolean mIsAnimating = false;
     private List<ArcInfo> mArcInfoList = new ArrayList<>();
     private List<Float> mRateAngleList = new ArrayList<>();
+    private List<Float> mSumRateAngleList = new ArrayList<>();
     private int mCurrentIndex = 0;
 
-    public ArcRateChartView(Context context) {
+    public ArcRateChartViewB4(Context context) {
         this(context, null);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs) {
+    public ArcRateChartViewB4(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs, int defStyle) {
+    public ArcRateChartViewB4(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
 
@@ -185,26 +183,40 @@ public class ArcRateChartView extends View {
                 canvas.drawArc(mArcRateRect, 0, progress, true, mArcRatePaint);
             } else {
                 mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - mCurrentIndex).mColorId));
-                float drawSwapAngle = 0;
-                for (int index = 0; index < mCurrentIndex; index++) {
-                    drawSwapAngle += (mRateAngleList.get(totalCnt - index - 1) + 1);
+                float xxx = 0;
+                if (mCurrentIndex == 1) {
+                    xxx = mRateAngleList.get(totalCnt - 1) + 1;
+                } else if (mCurrentIndex == 2) {
+                    xxx = mRateAngleList.get(totalCnt - 1) + mRateAngleList.get(totalCnt - 2) + 2;
+                } else if (mCurrentIndex == 3) {
+                    xxx = mRateAngleList.get(totalCnt - 1) + mRateAngleList.get(totalCnt - 2) + mRateAngleList.get(totalCnt - 3) + 3;
                 }
-                canvas.drawArc(mArcRateRect, 0, progress - drawSwapAngle - 1, true, mArcRatePaint);
+                canvas.drawArc(mArcRateRect, 0, progress - xxx - 1, true, mArcRatePaint);
 
-                float lastAngleSum = 0;
-                float lastSwapAngle = 0;
+                if (mCurrentIndex == 1) {
+                    float aa = mRateAngleList.get(totalCnt - 1 - 0);
+                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 0).mColorId));
+                    canvas.drawArc(mArcRateRect, progress - xxx - 1 + 1, aa, true, mArcRatePaint);
+                } else if (mCurrentIndex == 2) {
+                    float aa1 = mRateAngleList.get(totalCnt - 1 - 1);
+                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 1).mColorId));
+                    canvas.drawArc(mArcRateRect, progress - xxx - 1 + 1, aa1, true, mArcRatePaint);
 
-                for (int layer = mCurrentIndex - 1, increse = 0; layer >= 0; layer--, increse++) {
-                    float swapAngle = mRateAngleList.get(totalCnt - 1 - layer);
-                    if (layer == mCurrentIndex - 1) {
-                        lastAngleSum = 0;
-                    } else {
-                        lastAngleSum += lastSwapAngle;
-                    }
+                    float aa = mRateAngleList.get(totalCnt - 1 - 0);
+                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 0).mColorId));
+                    canvas.drawArc(mArcRateRect, progress - xxx - 1 + 1 + 1 + aa1, aa, true, mArcRatePaint);
+                } else if (mCurrentIndex == 3) {
+                    float aa2 = mRateAngleList.get(totalCnt - 1 - 2);
+                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 2).mColorId));
+                    canvas.drawArc(mArcRateRect, progress - xxx - 1 + 1, aa2, true, mArcRatePaint);
 
-                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - layer).mColorId));
-                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + increse + lastAngleSum, swapAngle, true, mArcRatePaint);
-                    lastSwapAngle = swapAngle;
+                    float aa1 = mRateAngleList.get(totalCnt - 1 - 1);
+                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 1).mColorId));
+                    canvas.drawArc(mArcRateRect, progress - xxx - 1 + 1 + 1 + aa2, aa1, true, mArcRatePaint);
+
+                    float aa = mRateAngleList.get(totalCnt - 1 - 0);
+                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 0).mColorId));
+                    canvas.drawArc(mArcRateRect, progress - xxx - 1 + 1 + 1 + 1 + aa1 + aa2, aa, true, mArcRatePaint);
                 }
             }
         }
@@ -304,6 +316,7 @@ public class ArcRateChartView extends View {
         mOriginTotalRateSum = 0;
         mArcInfoList.clear();
         mRateAngleList.clear();
+        mSumRateAngleList.clear();
         for (ArcInfo arcInfo : arcInfoList) {
             if (arcInfo.mRate <= 0) {
                 throw new IllegalArgumentException("Input ArcInfo.mRate must > 0!");
@@ -365,6 +378,27 @@ public class ArcRateChartView extends View {
         }
 
         adjustRateAngle();
+        initSumRateAngle();
+    }
+
+    /**
+     * 从后往前加
+     */
+    private void initSumRateAngle() {
+        float sum = 0;
+        for (int i = mRateAngleList.size() - 1; i >= 0; i--) {
+            if (mRateAngleList.size() == 1) {
+                sum += mRateAngleList.get(i);
+                mSumRateAngleList.add(sum);
+            } else {
+                if (i == (mRateAngleList.size() - 1)) {
+                    sum += mRateAngleList.get(i);
+                } else {
+                    sum += mRateAngleList.get(i) + 1;
+                }
+                mSumRateAngleList.add(sum);
+            }
+        }
     }
 
     /**

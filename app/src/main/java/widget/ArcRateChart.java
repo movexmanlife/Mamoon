@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
@@ -33,6 +34,7 @@ public class ArcRateChart extends View {
     private static final int DEFAULT_DRAW_ARC_TIME = 800;
     private static final int DEFAULT_ROTATE_TIME = 600;
     private static final int CIRCLE_ANGLE = 360;
+    private static final String TAG = ArcRateChart.class.getSimpleName();
 
     private Context mContext;
     private Paint mNoRatePaint; // 当所有比率为0，设置画笔
@@ -243,6 +245,7 @@ public class ArcRateChart extends View {
         if (progress > CIRCLE_ANGLE) {
             progress = CIRCLE_ANGLE;
         }
+        Log.e(TAG, "ppp: " + String.valueOf(progress));
         if (progress <= CIRCLE_ANGLE) {
             this.progress = progress;
             postInvalidate();

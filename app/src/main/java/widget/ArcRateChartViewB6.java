@@ -13,9 +13,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,13 +23,13 @@ import io.lahphim.mamoon.R;
 /**
  * 圆弧比率图，用于展示钱宝宝和定期理财项目
  */
-public class ArcRateChartView extends View {
+public class ArcRateChartViewB6 extends View {
     private static final int DEFAULT_BG_CIRCLE_COLOR = 0xffe6e6e6;
     private static final int DEFAULT_RATE_ARC_WIDTH = 25;
-    private static final int DEFAULT_DRAW_ARC_TIME = 800;
+    private static final int DEFAULT_DRAW_ARC_TIME = 5 * 1000;
     private static final int DEFAULT_ROTATE_TIME = 600;
     private static final int CIRCLE_ANGLE = 360;
-    private static final String TAG = ArcRateChartView.class.getSimpleName();
+    private static final String TAG = ArcRateChartViewB6.class.getSimpleName();
 
     private Context mContext;
     private Paint mArcRatePaint; // 画圆弧的画笔
@@ -72,15 +69,15 @@ public class ArcRateChartView extends View {
     private List<Float> mRateAngleList = new ArrayList<>();
     private int mCurrentIndex = 0;
 
-    public ArcRateChartView(Context context) {
+    public ArcRateChartViewB6(Context context) {
         this(context, null);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs) {
+    public ArcRateChartViewB6(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs, int defStyle) {
+    public ArcRateChartViewB6(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
 
@@ -192,20 +189,42 @@ public class ArcRateChartView extends View {
                 canvas.drawArc(mArcRateRect, 0, progress - drawSwapAngle - 1, true, mArcRatePaint);
 
                 float lastAngleSum = 0;
-                float lastSwapAngle = 0;
-
                 for (int layer = mCurrentIndex - 1, increse = 0; layer >= 0; layer--, increse++) {
                     float swapAngle = mRateAngleList.get(totalCnt - 1 - layer);
-                    if (layer == mCurrentIndex - 1) {
+                    if (layer == 0) {
                         lastAngleSum = 0;
                     } else {
-                        lastAngleSum += lastSwapAngle;
+                        lastAngleSum += swapAngle;
                     }
-
                     mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - layer).mColorId));
-                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + increse + lastAngleSum, swapAngle, true, mArcRatePaint);
-                    lastSwapAngle = swapAngle;
+                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + (increse++) + lastAngleSum, swapAngle, true, mArcRatePaint);
                 }
+
+//                if (mCurrentIndex == 1) {
+//                    float aa = mRateAngleList.get(totalCnt - 1 - 0);
+//                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 0).mColorId));
+//                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1, aa, true, mArcRatePaint);
+//                } else if (mCurrentIndex == 2) {
+//                    float aa1 = mRateAngleList.get(totalCnt - 1 - 1);
+//                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 1).mColorId));
+//                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1, aa1, true, mArcRatePaint);
+//
+//                    float aa = mRateAngleList.get(totalCnt - 1 - 0);
+//                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 0).mColorId));
+//                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + 1 + aa1, aa, true, mArcRatePaint);
+//                } else if (mCurrentIndex == 3) {
+//                    float aa2 = mRateAngleList.get(totalCnt - 1 - 2);
+//                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 2).mColorId));
+//                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1, aa2, true, mArcRatePaint);
+//
+//                    float aa1 = mRateAngleList.get(totalCnt - 1 - 1);
+//                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 1).mColorId));
+//                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + 1 + aa2, aa1, true, mArcRatePaint);
+//
+//                    float aa = mRateAngleList.get(totalCnt - 1 - 0);
+//                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - 0).mColorId));
+//                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + 1 + 1 + aa1 + aa2, aa, true, mArcRatePaint);
+//                }
             }
         }
 

@@ -53,10 +53,21 @@ public class RateActivity extends Activity {
 
     private void arcRateView() {
         List<ArcRateChartView.ArcInfo> list = new ArrayList<>();
-        list.add(new ArcRateChartView.ArcInfo(6624000, R.color.total_color));
+
+        list.add(new ArcRateChartView.ArcInfo(0.01, R.color.total_color));
         list.add(new ArcRateChartView.ArcInfo(796080, R.color.wait_color));
         list.add(new ArcRateChartView.ArcInfo(2653600, R.color.balance_color));
         list.add(new ArcRateChartView.ArcInfo(3184320, R.color.withdraw_color));
+
+//        list.add(new ArcRateChartView.ArcInfo(3, R.color.total_color));
+//        list.add(new ArcRateChartView.ArcInfo(796080, R.color.wait_color));
+//        list.add(new ArcRateChartView.ArcInfo(2653600, R.color.balance_color));
+//        list.add(new ArcRateChartView.ArcInfo(1, R.color.withdraw_color));
+
+//        list.add(new ArcRateChartView.ArcInfo(3, R.color.total_color));
+//        list.add(new ArcRateChartView.ArcInfo(0.9, R.color.wait_color));
+//        list.add(new ArcRateChartView.ArcInfo(4, R.color.balance_color));
+//        list.add(new ArcRateChartView.ArcInfo(1, R.color.withdraw_color));
         arcRateView.startAnimation(list);
     }
 }

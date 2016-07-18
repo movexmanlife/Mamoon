@@ -10,12 +10,8 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,18 +22,20 @@ import io.lahphim.mamoon.R;
 /**
  * 圆弧比率图，用于展示钱宝宝和定期理财项目
  */
-public class ArcRateChartView extends View {
+public class ArcRateChartViewB1 extends View {
     private static final int DEFAULT_BG_CIRCLE_COLOR = 0xffe6e6e6;
     private static final int DEFAULT_RATE_ARC_WIDTH = 25;
-    private static final int DEFAULT_DRAW_ARC_TIME = 800;
+    private static final int DEFAULT_DRAW_ARC_TIME = 10000;
+    private static final int DEFAULT_ROTATE_ANGLE = 270;
     private static final int DEFAULT_ROTATE_TIME = 600;
     private static final int CIRCLE_ANGLE = 360;
-    private static final String TAG = ArcRateChartView.class.getSimpleName();
 
     private Context mContext;
     private Paint mArcRatePaint; // 画圆弧的画笔
+    private Paint mMaskArcRatePaint; // 画圆弧的画笔
     private Paint mBgCirclePaint; // 画"圆弧"中的那个圆形
     private RectF mArcRateRect; // 圆弧的边界
+    private RectF mMaskArcRateRect; // 圆弧的边界
 
     private double mOriginTotalRateSum;
     private int mGapAngle = 1; // 空隙角度大小
@@ -70,17 +68,16 @@ public class ArcRateChartView extends View {
     private boolean mIsAnimating = false;
     private List<ArcInfo> mArcInfoList = new ArrayList<>();
     private List<Float> mRateAngleList = new ArrayList<>();
-    private int mCurrentIndex = 0;
 
-    public ArcRateChartView(Context context) {
+    public ArcRateChartViewB1(Context context) {
         this(context, null);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs) {
+    public ArcRateChartViewB1(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ArcRateChartView(Context context, AttributeSet attrs, int defStyle) {
+    public ArcRateChartViewB1(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
 
@@ -110,6 +107,9 @@ public class ArcRateChartView extends View {
     private void initPaint() {
         mArcRatePaint = new Paint();
         setPaintAttrs(mArcRatePaint, Style.FILL);
+
+        mMaskArcRatePaint = new Paint();
+        setPaintAttrs(mMaskArcRatePaint, mBgCircleColor, Style.FILL);
 
         // 背景圆
         mBgCirclePaint = new Paint();
@@ -149,64 +149,27 @@ public class ArcRateChartView extends View {
         int bgCircleRadius = (int) (radius - mArcWidth);
 
         if (mArcRateRect == null) {
-            mArcRateRect = new RectF(left, top, right, bottom);
+            mArcRateRect = new RectF(left + 2, top + 2, right - 2, bottom - 2);
+        }
+
+        if (mMaskArcRateRect == null) {
+            mMaskArcRateRect = new RectF(left, top, right, bottom);
         }
 
         if (mRateAngleList.size() <= 0) {
             return;
         }
-        // progress的值是可以达到360的
-        Log.e(TAG, "progress: " + String.valueOf(progress));
 
-        int totalCnt = mRateAngleList.size();
-        if (mCurrentIndex >= totalCnt) {
-            return;
+        float angleAsc = 0;
+        for (int i = 0; i < mRateAngleList.size(); i++) {
+            mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(i).mColorId));
+
+            canvas.drawArc(mArcRateRect, angleAsc + i * 1, mRateAngleList.get(i), true, mArcRatePaint);
+            angleAsc += mRateAngleList.get(i);
         }
 
-        float hadDrawTotalAngle = 0;
-        for (int i = 0; i <= mCurrentIndex; i++) {
-            hadDrawTotalAngle += mRateAngleList.get(totalCnt - 1 - i) + i;
-        }
-        Log.e(TAG, "hadDrawTotalAngle: " + String.valueOf(hadDrawTotalAngle));
-        if (progress > hadDrawTotalAngle) {
-            if (progress == CIRCLE_ANGLE) {
-
-            } else {
-                mCurrentIndex++;
-                if (mCurrentIndex >= totalCnt) {
-                    return;
-                }
-            }
-        }
-
-        for (int i = 0; i <= mCurrentIndex; i++) {
-            if (mCurrentIndex == 0) {
-                mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - mCurrentIndex).mColorId));
-                canvas.drawArc(mArcRateRect, 0, progress, true, mArcRatePaint);
-            } else {
-                mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - mCurrentIndex).mColorId));
-                float drawSwapAngle = 0;
-                for (int index = 0; index < mCurrentIndex; index++) {
-                    drawSwapAngle += (mRateAngleList.get(totalCnt - index - 1) + 1);
-                }
-                canvas.drawArc(mArcRateRect, 0, progress - drawSwapAngle - 1, true, mArcRatePaint);
-
-                float lastAngleSum = 0;
-                float lastSwapAngle = 0;
-
-                for (int layer = mCurrentIndex - 1, increse = 0; layer >= 0; layer--, increse++) {
-                    float swapAngle = mRateAngleList.get(totalCnt - 1 - layer);
-                    if (layer == mCurrentIndex - 1) {
-                        lastAngleSum = 0;
-                    } else {
-                        lastAngleSum += lastSwapAngle;
-                    }
-
-                    mArcRatePaint.setColor(getResources().getColor(mArcInfoList.get(totalCnt - 1 - layer).mColorId));
-                    canvas.drawArc(mArcRateRect, progress - drawSwapAngle - 1 + 1 + increse + lastAngleSum, swapAngle, true, mArcRatePaint);
-                    lastSwapAngle = swapAngle;
-                }
-            }
+        if (progress > 0 && progress < 360) {
+            canvas.drawArc(mMaskArcRateRect, progress + 1, 360 - progress, true, mMaskArcRatePaint);
         }
 
         // 绘制背景圆形
@@ -300,7 +263,6 @@ public class ArcRateChartView extends View {
             return;
         }
 
-        mCurrentIndex = 0;
         mOriginTotalRateSum = 0;
         mArcInfoList.clear();
         mRateAngleList.clear();
@@ -409,7 +371,7 @@ public class ArcRateChartView extends View {
         return (float) angle;
     }
 
-    public static class ArcInfo implements Cloneable {
+    public static class ArcInfo implements Cloneable{
         public double mRate;  // "圆弧"比率
         public int mColorId;  // "圆弧"颜色
 
